@@ -10,7 +10,9 @@
 {% endblock %}
 
 {% block app_content %}
+<div id="map">
   {% gizmo landchange_map %}
+</div>
   {% gizmo latitude %}
   {% gizmo longitude %}
 {% endblock %}
@@ -46,4 +48,8 @@
 {% block styles %}
 {{ block.super }}
 <link href="{% static 'landchange_learner/css/map.css' %}" rel="stylesheet" />
+{% endblock %}
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'landchange_learner/css/test.js' %}" type="text/javascript"></script>
 {% endblock %}
