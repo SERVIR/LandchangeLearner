@@ -29,6 +29,11 @@ class LandchangeLearner(TethysAppBase):
                 url='landchange-learner',
                 controller='landchange_learner.controllers.home'
             ),
+            UrlMap(
+                name='gee',
+                url='landchange-learner/get-ndvi-map',
+                controller='landchange_learner.controllers.gee'
+            ),
         )
 
         return url_maps

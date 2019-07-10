@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from tethys_sdk.gizmos import MapView, Button, TextInput, MVView, MVDraw
-
-@login_required()
+from tethys_sdk.gizmos import MapView, Button, TextInput, MVView, MVDraw, DatePicker
+from .geeutils import getNdviMap
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 def home(request):
     """
     Controller for the app home page.
@@ -30,11 +31,9 @@ def home(request):
 	draw=drawing_options
     )
 
-    save_button = Button(
-        display_text='',
-        name='save_button',
-        icon='glyphicon glyphicon-floppy-disk',
-        style='success',
+    get_ndvi_button = Button(
+        display_text='Load NDVI',
+        name='get_ndvi',
         attributes={
             'data-toggle':'tooltip',
             'data-placement':'top',
@@ -53,12 +52,45 @@ def home(request):
         name='Longitude',
         placeholder='Enter Coordinates'
     )
+    startdatepicker = DatePicker(name='startdate',
+        display_text='Start Date',
+        autoclose=True,
+        format='yyyy-mm-dd',
+        start_date='2014-02-14',
+        start_view='decade',
+        today_button=True,
+        initial='2014-02-14')
+    enddatepicker = DatePicker(name='enddate',
+        display_text='End Date',
+        autoclose=True,
+        format='yyyy-mm-dd',
+        start_date='2014-02-14',
+        start_view='decade',
+        today_button=True,
+        initial='2014-02-14')
 
     context = {
-       'save_button': save_button,
+       'get_ndvi_button': get_ndvi_button,
        'landchange_map': landchange_map,
        'latitude': latitude,
        'longitude': longitude,
+       'startdatepicker': startdatepicker,
+       'enddatepicker': enddatepicker
     }
 
     return render(request, 'landchange_learner/home.html', context)
+@csrf_exempt
+def gee(request):	
+    """
+    Controller for the gee home page.
+    """	
+    return_obj = {}
+    if request.is_ajax() and request.method == 'POST':
+        startDate = request.POST["startDate"]
+        endDate = request.POST["endDate"]
+        url = getNdviMap(startDate,endDate)
+        return_obj["url"] = url
+
+    return JsonResponse(return_obj)
+    
+    
