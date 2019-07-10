@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
 	getMapRef();
 });
@@ -46,6 +47,4 @@ function getMapRef(){
 	    console.log(xhr.responseText);
 	});
 }); 
-
-
 

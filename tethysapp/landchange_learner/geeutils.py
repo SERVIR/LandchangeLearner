@@ -22,4 +22,3 @@ def getNdviMap(startTime='2018-01-01', endTime='2019-01-01'):
 	return map_url
 
 
-
