@@ -16,6 +16,7 @@ def getTileUrl(img,visParams=None):
 
 def getNdviMap(geom,typ,startTime='2018-01-01', endTime='2019-01-01'):
 	#takes a start time and end time date(YYYY-MM-DD), returns NDVI map from LANDSAT for the date range
+        point = None
         if typ == "Point":
                 point = ee.Geometry.Point(json.loads(geom))
         if typ == "Polygon":

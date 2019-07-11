@@ -94,27 +94,54 @@ selectedCollection.on('add', ({ element: feature }) => {
 }
 
 	
- $(getNdviButton).click(function(){
-	var xhr = $.ajax({
-		type: "POST",
-		jsonp: "callback",
-		url: getNdviUrl, 
-		data:{"startDate":$('#startdate').val(),"endDate": $('#enddate').val(),"geom":JSON.stringify(geom),"geomtype":geomtype}       
-	});
-	xhr.done(function(data) {
-	    const source = new ol.source.XYZ({
-		             url: data.url,
-		           });
+ $(getNdviButton).unbind('click').click(function(evt){
+	if(geomtype == "Point"){
+		geom = ol.proj.transform(geom, 'EPSG:3857', 'EPSG:4326');
+	} else { //polygon
 
-	    map.addLayer(new ol.layer.Tile({
-		        source: source,
-		    }));
-
-	})
-	.fail(function(xhr, status, error) {
-	    console.log(xhr.responseText);
-	});
+		if(geom.length == 1)
+		{
+			geom = geom[0];
+		}
+		for(var i = 0; i < geom.length; i++)
+		{
+			geom[i] = ol.proj.transform(geom[i], 'EPSG:3857', 'EPSG:4326');
+		}
+		if(JSON.stringify(geom[0]) == JSON.stringify(geom[geom.length -1])){
+			geomtype = "Polygon";
+		}
+	}
+	if(geomtype == "Point" || geom[0])
+	{
+		makeAjaxCall(getNdviUrl, {
+						"startDate":$('#startdate').val(),
+						"endDate": $('#enddate').val(),
+						"geom":JSON.stringify(geom),
+						"geomtype":geomtype
+					} );
+	}
 }); 
+
+function makeAjaxCall(url, data){
+	$.ajax({
+			type: "POST",
+			url: getNdviUrl, 
+			data:{"startDate":$('#startdate').val(),"endDate": $('#enddate').val(),"geom":JSON.stringify(geom),"geomtype":geomtype}       
+		})
+		.done(function(data) {
+		    const source = new ol.source.XYZ({
+				     url: data.url,
+				   });
+
+		    map.addLayer(new ol.layer.Tile({
+				source: source,
+			    }));
+
+		})
+		.fail(function(xhr, status, error) {
+		    console.log(xhr.responseText);
+		});
+}
 
 
 

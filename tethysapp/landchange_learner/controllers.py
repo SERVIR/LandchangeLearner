@@ -9,7 +9,7 @@ def home(request):
     Controller for the app home page.
     """
     drawing_options = MVDraw(
-    	controls=['Modify', 'Delete', 'Move', 'Point', 'LineString', 'Polygon', 'Box'],
+    	controls=[ 'Delete',  'Point', 'Polygon', 'Box'],
     	initial='Point',
     	output_format='WKT'
     )
