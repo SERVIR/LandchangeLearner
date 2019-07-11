@@ -14,11 +14,17 @@ def getTileUrl(img,visParams=None):
 	tile_url_template = "https://earthengine.googleapis.com/map/"+map_id['mapid']+"/{z}/{x}/{y}?token="+map_id['token']
 	return tile_url_template
 
-def getNdviMap(startTime='2018-01-01', endTime='2019-01-01'):
+def getNdviMap(geom,typ,startTime='2018-01-01', endTime='2019-01-01'):
 	#takes a start time and end time date(YYYY-MM-DD), returns NDVI map from LANDSAT for the date range
-	collection = LC8.filterDate(startTime,endTime).map(calcNDVI)
-	composite=collection.qualityMosaic('ndvi')
-	map_url=getTileUrl(composite,{min:0, max:1, 'bands':'ndvi', 'palette':'white, lightgreen, green,darkgreen'})	
-	return map_url
+        if typ == "Point":
+                point = ee.Geometry.Point(json.loads(geom))
+        if typ == "Polygon":
+                point = ee.Geometry.Polygon(json.loads(geom))
+	#print(point)
+        collection = LC8.filterDate(startTime,endTime).filterBounds(point).map(calcNDVI)
+        composite=collection.qualityMosaic('ndvi')
+        map_url=getTileUrl(composite,{min:0, max:1, 'bands':'ndvi', 'palette':'white, lightgreen, green,darkgreen'})	
+        return map_url
+
 
 

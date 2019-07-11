@@ -37,7 +37,7 @@ def home(request):
         attributes={
             'data-toggle':'tooltip',
             'data-placement':'top',
-            'title':'Save'
+            'title':'Load NDVI'
         }
     )
 
@@ -56,18 +56,18 @@ def home(request):
         display_text='Start Date',
         autoclose=True,
         format='yyyy-mm-dd',
-        start_date='2014-02-14',
+        start_date='2014-02-01',
         start_view='decade',
         today_button=True,
-        initial='2014-02-14')
+        initial='2014-02-01')
     enddatepicker = DatePicker(name='enddate',
         display_text='End Date',
         autoclose=True,
         format='yyyy-mm-dd',
-        start_date='2014-02-14',
+        start_date='2015-02-01',
         start_view='decade',
         today_button=True,
-        initial='2014-02-14')
+        initial='2015-02-01')
 
     context = {
        'get_ndvi_button': get_ndvi_button,
@@ -88,7 +88,9 @@ def gee(request):
     if request.is_ajax() and request.method == 'POST':
         startDate = request.POST["startDate"]
         endDate = request.POST["endDate"]
-        url = getNdviMap(startDate,endDate)
+        geom=request.POST["geom"]
+        typ=request.POST["geomtype"]
+        url = getNdviMap(geom,typ,startDate,endDate)
         return_obj["url"] = url
 
     return JsonResponse(return_obj)
